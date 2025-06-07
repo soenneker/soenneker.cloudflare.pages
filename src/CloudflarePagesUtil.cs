@@ -53,7 +53,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
 
         try
         {
-            Pages_projectResponse? result = await client.Accounts[accountId].Pages.Projects[name].GetAsync(null, null, cancellationToken);
+            Pages_projectResponse? result = await client.Accounts[accountId].Pages.Projects[name].GetAsync(cancellationToken: cancellationToken);
             _logger.LogInformation("Successfully retrieved Pages project {Name}", name);
             return result;
         }
@@ -108,7 +108,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
         CloudflareOpenApiClient client = await _client.Get(cancellationToken);
         try
         {
-            Pages_projectsResponse? result = await client.Accounts[accountId].Pages.Projects.GetAsync(null, null, cancellationToken);
+            Pages_projectsResponse? result = await client.Accounts[accountId].Pages.Projects.GetAsync(cancellationToken: cancellationToken);
             _logger.LogInformation("Successfully listed Pages projects");
             return result.Result;
         }
@@ -167,9 +167,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
         CloudflareOpenApiClient client = await _client.Get(cancellationToken);
         try
         {
-            var body = new Pages_domains_get_domains_RequestBody_application_json();
-            Pages_domainResponseCollection? result =
-                await client.Accounts[accountId].Pages.Projects[projectName].Domains.GetAsync(body, null, cancellationToken);
+            Pages_domainResponseCollection? result = await client.Accounts[accountId].Pages.Projects[projectName].Domains.GetAsync(cancellationToken: cancellationToken);
             _logger.LogInformation("Successfully listed custom domains for Pages project {ProjectName}", projectName);
             return result.Result;
         }
@@ -276,7 +274,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
         CloudflareOpenApiClient client = await _client.Get(cancellationToken);
         try
         {
-            var result = await client.Accounts[accountId].Pages.Projects[projectName].GetAsync(null, null, cancellationToken);
+            var result = await client.Accounts[accountId].Pages.Projects[projectName].GetAsync(cancellationToken: cancellationToken);
             _logger.LogInformation("Successfully retrieved GitHub configuration for Pages project {ProjectName}", projectName);
             return result.Result?.Source;
         }
