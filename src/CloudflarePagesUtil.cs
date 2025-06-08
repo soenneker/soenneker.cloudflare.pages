@@ -7,6 +7,8 @@ using Soenneker.Cloudflare.OpenApiClient;
 using Soenneker.Cloudflare.OpenApiClient.Models;
 using Soenneker.Cloudflare.Pages.Abstract;
 using Soenneker.Cloudflare.Utils.Client.Abstract;
+using Soenneker.Extensions.Task;
+using Soenneker.Extensions.ValueTask;
 
 namespace Soenneker.Cloudflare.Pages;
 
@@ -25,7 +27,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
     public async ValueTask<Pages_projectResponse> Create(string accountId, string name, string productionBranch, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Creating Pages project {Name} in account {AccountId}", name, accountId);
-        CloudflareOpenApiClient client = await _client.Get(cancellationToken);
+        CloudflareOpenApiClient client = await _client.Get(cancellationToken).NoSync();
 
         try
         {
@@ -35,7 +37,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
                 ProductionBranch = productionBranch
             };
 
-            Pages_projectResponse? result = await client.Accounts[accountId].Pages.Projects.PostAsync(project, null, cancellationToken);
+            Pages_projectResponse? result = await client.Accounts[accountId].Pages.Projects.PostAsync(project, null, cancellationToken).NoSync();
             _logger.LogInformation("Successfully created Pages project {Name}", name);
             return result;
         }
@@ -49,11 +51,11 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
     public async ValueTask<Pages_projectResponse> Get(string accountId, string name, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Getting Pages project {Name} from account {AccountId}", name, accountId);
-        CloudflareOpenApiClient client = await _client.Get(cancellationToken);
+        CloudflareOpenApiClient client = await _client.Get(cancellationToken).NoSync();
 
         try
         {
-            Pages_projectResponse? result = await client.Accounts[accountId].Pages.Projects[name].GetAsync(null, null, cancellationToken);
+            Pages_projectResponse? result = await client.Accounts[accountId].Pages.Projects[name].GetAsync(null, cancellationToken).NoSync();
             _logger.LogInformation("Successfully retrieved Pages project {Name}", name);
             return result;
         }
@@ -67,7 +69,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
     public async ValueTask<Pages_projectResponse> Update(string accountId, string name, string productionBranch, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Updating Pages project {Name} in account {AccountId}", name, accountId);
-        CloudflareOpenApiClient client = await _client.Get(cancellationToken);
+        CloudflareOpenApiClient client = await _client.Get(cancellationToken).NoSync();
         try
         {
             var project = new Pages_projectPatch
@@ -75,7 +77,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
                 ProductionBranch = productionBranch
             };
 
-            Pages_projectResponse? result = await client.Accounts[accountId].Pages.Projects[name].PatchAsync(project, null, cancellationToken);
+            Pages_projectResponse? result = await client.Accounts[accountId].Pages.Projects[name].PatchAsync(project, null, cancellationToken).NoSync();
             _logger.LogInformation("Successfully updated Pages project {Name}", name);
             return result;
         }
@@ -89,10 +91,10 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
     public async ValueTask Delete(string accountId, string name, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Deleting Pages project {Name} from account {AccountId}", name, accountId);
-        CloudflareOpenApiClient client = await _client.Get(cancellationToken);
+        CloudflareOpenApiClient client = await _client.Get(cancellationToken).NoSync();
         try
         {
-            await client.Accounts[accountId].Pages.Projects[name].DeleteAsync(null, null, cancellationToken);
+            await client.Accounts[accountId].Pages.Projects[name].DeleteAsync(null, null, cancellationToken).NoSync();
             _logger.LogInformation("Successfully deleted Pages project {Name}", name);
         }
         catch (Exception ex)
@@ -105,10 +107,10 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
     public async ValueTask<List<Pages_deployments>> List(string accountId, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Listing Pages projects in account {AccountId}", accountId);
-        CloudflareOpenApiClient client = await _client.Get(cancellationToken);
+        CloudflareOpenApiClient client = await _client.Get(cancellationToken).NoSync();
         try
         {
-            Pages_projectsResponse? result = await client.Accounts[accountId].Pages.Projects.GetAsync(null, null, cancellationToken);
+            Pages_projectsResponse? result = await client.Accounts[accountId].Pages.Projects.GetAsync(null, cancellationToken).NoSync();
             _logger.LogInformation("Successfully listed Pages projects");
             return result.Result;
         }
@@ -123,7 +125,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
         CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Adding custom domain {DomainName} to Pages project {ProjectName}", domainName, projectName);
-        CloudflareOpenApiClient client = await _client.Get(cancellationToken);
+        CloudflareOpenApiClient client = await _client.Get(cancellationToken).NoSync();
         try
         {
             var domain = new Pages_domainsPost
@@ -132,7 +134,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
             };
 
             Pages_domainResponseSingle? result =
-                await client.Accounts[accountId].Pages.Projects[projectName].Domains.PostAsync(domain, null, cancellationToken);
+                await client.Accounts[accountId].Pages.Projects[projectName].Domains.PostAsync(domain, null, cancellationToken).NoSync();
             _logger.LogInformation("Successfully added custom domain {DomainName} to Pages project {ProjectName}", domainName, projectName);
             return result;
         }
@@ -146,11 +148,11 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
     public async ValueTask RemoveCustomDomain(string accountId, string projectName, string domainName, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Removing custom domain {DomainName} from Pages project {ProjectName}", domainName, projectName);
-        CloudflareOpenApiClient client = await _client.Get(cancellationToken);
+        CloudflareOpenApiClient client = await _client.Get(cancellationToken).NoSync();
         try
         {
             var body = new Pages_domains_delete_domain_RequestBody_application_json();
-            await client.Accounts[accountId].Pages.Projects[projectName].Domains[domainName].DeleteAsync(body, null, cancellationToken);
+            await client.Accounts[accountId].Pages.Projects[projectName].Domains[domainName].DeleteAsync(body, null, cancellationToken).NoSync();
             _logger.LogInformation("Successfully removed custom domain {DomainName} from Pages project {ProjectName}", domainName, projectName);
         }
         catch (Exception ex)
@@ -164,12 +166,12 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
         CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Listing custom domains for Pages project {ProjectName}", projectName);
-        CloudflareOpenApiClient client = await _client.Get(cancellationToken);
+        CloudflareOpenApiClient client = await _client.Get(cancellationToken).NoSync();
         try
         {
-            var body = new Pages_domains_get_domains_RequestBody_application_json();
+            var body = new object(); // Simplified request body since the specific type is not available
             Pages_domainResponseCollection? result =
-                await client.Accounts[accountId].Pages.Projects[projectName].Domains.GetAsync(body, null, cancellationToken);
+                await client.Accounts[accountId].Pages.Projects[projectName].Domains.GetAsync(null, cancellationToken).NoSync();
             _logger.LogInformation("Successfully listed custom domains for Pages project {ProjectName}", projectName);
             return result.Result;
         }
@@ -184,7 +186,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
         string productionBranch, string? buildCommand = null, string? buildOutputDir = null, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Connecting Pages project {ProjectName} to GitHub repository {RepoOwner}/{RepoName}", projectName, repoOwner, repoName);
-        CloudflareOpenApiClient client = await _client.Get(cancellationToken);
+        CloudflareOpenApiClient client = await _client.Get(cancellationToken).NoSync();
         try
         {
             var project = new Pages_projectObject
@@ -214,7 +216,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
                 };
             }
 
-            var result = await client.Accounts[accountId].Pages.Projects.PostAsync(project, null, cancellationToken);
+            Pages_projectResponse? result = await client.Accounts[accountId].Pages.Projects.PostAsync(project, null, cancellationToken).NoSync();
             _logger.LogInformation("Successfully connected Pages project {ProjectName} to GitHub repository {RepoOwner}/{RepoName}", projectName, repoOwner,
                 repoName);
             return result;
@@ -230,7 +232,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
         string productionBranch, string? buildCommand = null, string? buildOutputDir = null, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Updating GitHub configuration for Pages project {ProjectName}", projectName);
-        CloudflareOpenApiClient client = await _client.Get(cancellationToken);
+        CloudflareOpenApiClient client = await _client.Get(cancellationToken).NoSync();
         try
         {
             var project = new Pages_projectPatch
@@ -259,7 +261,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
                 };
             }
 
-            var result = await client.Accounts[accountId].Pages.Projects[projectName].PatchAsync(project, null, cancellationToken);
+            Pages_projectResponse? result = await client.Accounts[accountId].Pages.Projects[projectName].PatchAsync(project, null, cancellationToken).NoSync();
             _logger.LogInformation("Successfully updated GitHub configuration for Pages project {ProjectName}", projectName);
             return result;
         }
@@ -273,10 +275,10 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
     public async ValueTask<Pages_source?> GetGitHubConfig(string accountId, string projectName, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Getting GitHub configuration for Pages project {ProjectName}", projectName);
-        CloudflareOpenApiClient client = await _client.Get(cancellationToken);
+        CloudflareOpenApiClient client = await _client.Get(cancellationToken).NoSync();
         try
         {
-            var result = await client.Accounts[accountId].Pages.Projects[projectName].GetAsync(null, null, cancellationToken);
+            Pages_projectResponse? result = await client.Accounts[accountId].Pages.Projects[projectName].GetAsync(null, cancellationToken).NoSync();
             _logger.LogInformation("Successfully retrieved GitHub configuration for Pages project {ProjectName}", projectName);
             return result.Result?.Source;
         }
