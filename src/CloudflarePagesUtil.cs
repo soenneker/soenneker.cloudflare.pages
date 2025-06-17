@@ -13,6 +13,9 @@ using Soenneker.Extensions.ValueTask;
 using Soenneker.Cloudflare.DnsRecords.Abstract;
 using Soenneker.Cloudflare.Zones.Abstract;
 using Soenneker.Extensions.String;
+using Soenneker.Cloudflare.OpenApiClient.Accounts.Item.Pages.Projects.Item;
+using Soenneker.Cloudflare.OpenApiClient.Accounts.Item.Pages.Projects.Item.Domains.Item;
+using Soenneker.Cloudflare.OpenApiClient.Accounts.Item.Workers.Domains.Item;
 
 namespace Soenneker.Cloudflare.Pages;
 
@@ -185,7 +188,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
                 }
             }
 
-            var body = new Pages_project_delete_project_RequestBody_application_json
+            var body = new WithProject_nameDeleteRequestBody
             {
             };
 
@@ -253,7 +256,8 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
         CloudflareOpenApiClient client = await _client.Get(cancellationToken).NoSync();
         try
         {
-            var body = new Pages_domains_delete_domain_RequestBody_application_json();
+            var body = new WithDomain_nameDeleteRequestBody();
+
             await client.Accounts[accountId].Pages.Projects[projectName].Domains[customDomain].DeleteAsync(body, null, cancellationToken).NoSync();
 
             string zoneId = await _zonesUtil.GetId(zoneDomain, cancellationToken).NoSync();
