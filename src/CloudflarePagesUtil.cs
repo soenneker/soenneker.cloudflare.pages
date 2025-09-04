@@ -15,7 +15,6 @@ using Soenneker.Cloudflare.Zones.Abstract;
 using Soenneker.Extensions.String;
 using Soenneker.Cloudflare.OpenApiClient.Accounts.Item.Pages.Projects.Item;
 using Soenneker.Cloudflare.OpenApiClient.Accounts.Item.Pages.Projects.Item.Domains.Item;
-using Soenneker.Cloudflare.OpenApiClient.Accounts.Item.Workers.Domains.Item;
 
 namespace Soenneker.Cloudflare.Pages;
 
