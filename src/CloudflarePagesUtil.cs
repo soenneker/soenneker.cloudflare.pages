@@ -51,7 +51,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
 
             if (buildCommand.HasContent() || buildOutputDir.HasContent())
             {
-                project.BuildConfig = new Pages_build_config
+                project.BuildConfig = new Pages_project_object_build_config
                 {
                     BuildCommand = buildCommand,
                     DestinationDir = buildOutputDir
@@ -89,7 +89,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
                 ProductionBranch = productionBranch,
                 Source = new Pages_source
                 {
-                    Type = "github",
+                    Type = Pages_source_type.Github,
                     Config = new Pages_source_config
                     {
                         Owner = repoOwner,
@@ -103,7 +103,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
 
             if (buildCommand.HasContent() || buildOutputDir.HasContent())
             {
-                project.BuildConfig = new Pages_build_config
+                project.BuildConfig = new Pages_project_object_build_config
                 {
                     BuildCommand = buildCommand,
                     DestinationDir = buildOutputDir
@@ -303,7 +303,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
                 ProductionBranch = productionBranch,
                 Source = new Pages_source
                 {
-                    Type = "github",
+                    Type = Pages_source_type.Github,
                     Config = new Pages_source_config
                     {
                         Owner = repoOwner,
@@ -317,7 +317,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
 
             if (!string.IsNullOrEmpty(buildCommand) || !string.IsNullOrEmpty(buildOutputDir))
             {
-                project.BuildConfig = new Pages_build_config
+                project.BuildConfig = new Pages_project_object_build_config
                 {
                     BuildCommand = buildCommand,
                     DestinationDir = buildOutputDir
