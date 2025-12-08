@@ -21,7 +21,7 @@ public interface ICloudflarePagesUtil
     /// <param name="deployNow">Whether to trigger an immediate deployment after creation.</param>
     /// <param name="cancellationToken">Optional cancellation token.</param>
     /// <returns>The created Pages project response.</returns>
-    ValueTask<Pages_project_response> Create(string accountId, string projectName, string productionBranch, string? buildCommand, string? buildOutputDir, bool deployNow = false, CancellationToken cancellationToken = default);
+    ValueTask<Pages_project> Create(string accountId, string projectName, string productionBranch, string? buildCommand, string? buildOutputDir, bool deployNow = false, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Creates a new Pages project and connects it to a GitHub repository in one step.
@@ -36,7 +36,7 @@ public interface ICloudflarePagesUtil
     /// <param name="buildOutputDir">Optional directory containing the build output.</param>
     /// <param name="cancellationToken">Optional cancellation token.</param>
     /// <returns>The created Pages project response.</returns>
-    ValueTask<Pages_project_response> CreateWithGitHub(string accountId, string projectName, string repoOwner, string repoName,
+    ValueTask<Pages_project> CreateWithGitHub(string accountId, string projectName, string repoOwner, string repoName,
         string productionBranch, bool deployNow = false, string? buildCommand = null, string? buildOutputDir = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -46,7 +46,7 @@ public interface ICloudflarePagesUtil
     /// <param name="name">The name of the project to retrieve.</param>
     /// <param name="cancellationToken">Optional cancellation token.</param>
     /// <returns>The retrieved Pages project response.</returns>
-    ValueTask<Pages_project_response> Get(string accountId, string name, CancellationToken cancellationToken = default);
+    ValueTask<Pages_project> Get(string accountId, string name, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates a Pages project with a new production branch.
@@ -56,7 +56,7 @@ public interface ICloudflarePagesUtil
     /// <param name="productionBranch">The new production branch name.</param>
     /// <param name="cancellationToken">Optional cancellation token.</param>
     /// <returns>The updated Pages project response.</returns>
-    ValueTask<Pages_project_response> Update(string accountId, string name, string productionBranch, CancellationToken cancellationToken = default);
+    ValueTask<Pages_project> Update(string accountId, string name, string productionBranch, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Deletes a Pages project and all its associated custom domains.
@@ -73,7 +73,7 @@ public interface ICloudflarePagesUtil
     /// <param name="accountId">The Cloudflare account ID.</param>
     /// <param name="cancellationToken">Optional cancellation token.</param>
     /// <returns>A list of Pages deployments.</returns>
-    ValueTask<List<Pages_deployments>> List(string accountId, CancellationToken cancellationToken = default);
+    ValueTask<List<Pages_project>> List(string accountId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Adds a custom domain to a Pages project and creates the necessary DNS records.
@@ -84,7 +84,7 @@ public interface ICloudflarePagesUtil
     /// <param name="customDomain">The custom domain to add.</param>
     /// <param name="cancellationToken">Optional cancellation token.</param>
     /// <returns>The response for the added domain.</returns>
-    ValueTask<Pages_domain_response_single> AddCustomDomain(string accountId, string projectName, string zoneDomain, string customDomain, CancellationToken cancellationToken = default);
+    ValueTask<Pages_domain> AddCustomDomain(string accountId, string projectName, string zoneDomain, string customDomain, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Removes a custom domain from a Pages project and cleans up associated DNS records.
@@ -103,7 +103,7 @@ public interface ICloudflarePagesUtil
     /// <param name="projectName">The name of the Pages project.</param>
     /// <param name="cancellationToken">Optional cancellation token.</param>
     /// <returns>A list of custom domain objects.</returns>
-    ValueTask<List<Pages_domain_object>> ListCustomDomains(string accountId, string projectName, CancellationToken cancellationToken = default);
+    ValueTask<List<Pages_domain>> ListCustomDomains(string accountId, string projectName, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates the GitHub connection and build configuration for an existing Pages project.
@@ -117,7 +117,7 @@ public interface ICloudflarePagesUtil
     /// <param name="buildOutputDir">Optional directory containing the build output.</param>
     /// <param name="cancellationToken">Optional cancellation token.</param>
     /// <returns>The updated Pages project response.</returns>
-    ValueTask<Pages_project_response> UpdateGitHubConfig(string accountId, string projectName, string repoOwner, string repoName,
+    ValueTask<Pages_project> UpdateGitHubConfig(string accountId, string projectName, string repoOwner, string repoName,
         string productionBranch, string? buildCommand = null, string? buildOutputDir = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -137,5 +137,5 @@ public interface ICloudflarePagesUtil
     /// <param name="branch">The branch to deploy from.</param>
     /// <param name="cancellationToken">Optional cancellation token.</param>
     /// <returns>The created deployment response.</returns>
-    ValueTask<Pages_deployment_new_deployment> CreateDeployment(string accountId, string projectName, string branch, CancellationToken cancellationToken = default);
+    ValueTask<Pages_deployment> CreateDeployment(string accountId, string projectName, string branch, CancellationToken cancellationToken = default);
 }
