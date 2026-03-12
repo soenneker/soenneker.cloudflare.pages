@@ -29,7 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Soenneker.Cloudflare.Pages.csproj" />
+        <ProjectReference Include="..\..\src\Soenneker.Cloudflare.Pages\Soenneker.Cloudflare.Pages.csproj" />
     </ItemGroup>
 
     <ItemGroup>
