@@ -1,48 +1,47 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Soenneker.Cloudflare.Pages.Abstract;
-using Soenneker.Facts.Local;
-using Soenneker.Tests.FixturedUnit;
+using Soenneker.Tests.Attributes.Local;
+using Soenneker.Tests.HostedUnit;
 using System.Threading.Tasks;
 using Soenneker.Facts.Manual;
-using Xunit;
 
 namespace Soenneker.Cloudflare.Pages.Tests;
 
-[Collection("Collection")]
-public sealed class CloudflarePagesUtilTests : FixturedUnitTest
+[ClassDataSource<Host>(Shared = SharedType.PerTestSession)]
+public sealed class CloudflarePagesUtilTests : HostedUnitTest
 {
     private readonly ICloudflarePagesUtil _util;
     private readonly IConfiguration _config;
 
     private const string TestProjectName = "test-project-leadping-gh";
 
-    public CloudflarePagesUtilTests(Fixture fixture, ITestOutputHelper output) : base(fixture, output)
+    public CloudflarePagesUtilTests(Host host) : base(host)
     {
         _util = Resolve<ICloudflarePagesUtil>(true);
         _config = Resolve<IConfiguration>();
     }
 
-    [Fact]
+    [Test]
     public void Default()
     {
     }
 
     [ManualFact]
-    // [LocalFact]
+    // [LocalOnly]
     public async ValueTask Create()
     {
         string? accountId = _config["Cloudflare:AccountId"];
     }
 
     [ManualFact]
-    // [LocalFact]
+    // [LocalOnly]
     public async ValueTask ConnectToGitHub()
     {
         string? accountId = _config["Cloudflare:AccountId"];
     }
 
     [ManualFact]
-    // [LocalFact]
+    // [LocalOnly]
     public async ValueTask CreateDeployment()
     {
         string? accountId = _config["Cloudflare:AccountId"];
@@ -51,7 +50,7 @@ public sealed class CloudflarePagesUtilTests : FixturedUnitTest
     }
 
     [ManualFact]
-    // [LocalFact]
+    // [LocalOnly]
     public async ValueTask RemoveCustomDomain()
     {
         string? accountId = _config["Cloudflare:AccountId"];
