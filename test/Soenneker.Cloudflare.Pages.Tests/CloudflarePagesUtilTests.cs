@@ -3,7 +3,6 @@ using Soenneker.Cloudflare.Pages.Abstract;
 using Soenneker.Tests.Attributes.Local;
 using Soenneker.Tests.HostedUnit;
 using System.Threading.Tasks;
-using Soenneker.Facts.Manual;
 
 namespace Soenneker.Cloudflare.Pages.Tests;
 
@@ -26,21 +25,21 @@ public sealed class CloudflarePagesUtilTests : HostedUnitTest
     {
     }
 
-    [ManualFact]
+    [Skip("Manual")]
     // [LocalOnly]
     public async ValueTask Create()
     {
         string? accountId = _config["Cloudflare:AccountId"];
     }
 
-    [ManualFact]
+    [Skip("Manual")]
     // [LocalOnly]
     public async ValueTask ConnectToGitHub()
     {
         string? accountId = _config["Cloudflare:AccountId"];
     }
 
-    [ManualFact]
+    [Skip("Manual")]
     // [LocalOnly]
     public async ValueTask CreateDeployment()
     {
@@ -49,7 +48,7 @@ public sealed class CloudflarePagesUtilTests : HostedUnitTest
         await _util.CreateDeployment(accountId, TestProjectName, "main", CancellationToken);
     }
 
-    [ManualFact]
+    [Skip("Manual")]
     // [LocalOnly]
     public async ValueTask RemoveCustomDomain()
     {
