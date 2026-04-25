@@ -1,3 +1,4 @@
+using System.Threading;
 using Microsoft.Extensions.Configuration;
 using Soenneker.Cloudflare.Pages.Abstract;
 using Soenneker.Tests.Attributes.Local;
@@ -41,11 +42,11 @@ public sealed class CloudflarePagesUtilTests : HostedUnitTest
 
     [Skip("Manual")]
     // [LocalOnly]
-    public async ValueTask CreateDeployment()
+    public async ValueTask CreateDeployment(CancellationToken cancellationToken)
     {
         string? accountId = _config["Cloudflare:AccountId"];
 
-        await _util.CreateDeployment(accountId, TestProjectName, "main", CancellationToken);
+        await _util.CreateDeployment(accountId, TestProjectName, "main", cancellationToken);
     }
 
     [Skip("Manual")]
