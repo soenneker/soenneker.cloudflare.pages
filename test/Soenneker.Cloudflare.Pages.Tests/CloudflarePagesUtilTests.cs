@@ -13,7 +13,7 @@ public sealed class CloudflarePagesUtilTests : HostedUnitTest
     private readonly ICloudflarePagesUtil _util;
     private readonly IConfiguration _config;
 
-    private const string TestProjectName = "test-project-leadping-gh";
+    private const string TestProjectName = "test-project-soenneker-gh";
 
     public CloudflarePagesUtilTests(Host host) : base(host)
     {
