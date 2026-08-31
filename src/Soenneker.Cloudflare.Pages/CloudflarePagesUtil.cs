@@ -16,7 +16,6 @@ using Soenneker.Extensions.String;
 
 namespace Soenneker.Cloudflare.Pages;
 
-///<inheritdoc cref="ICloudflarePagesUtil"/>
 public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
 {
     private readonly ICloudflareClientUtil _client;
@@ -192,7 +191,10 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
             {
                 foreach (PagesDomain domain in domains)
                 {
-                    await RemoveCustomDomain(accountId, name, zoneDomain, domain.Name, cancellationToken).NoSync();
+                    string domainName = domain.Name ??
+                                        throw new InvalidOperationException("Cloudflare returned a Pages domain without a name");
+
+                    await RemoveCustomDomain(accountId, name, zoneDomain, domainName, cancellationToken).NoSync();
                 }
             }
 
@@ -213,10 +215,32 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
         CloudflareOpenApiClient client = await _client.Get(cancellationToken).NoSync();
         try
         {
-            PagesProjectGetProjects200? result =
-                await client.Accounts[accountId].Pages.Projects.GetAsync(null, cancellationToken).NoSync();
+            var projects = new List<PagesProject>();
+            var page = 1;
+
+            while (true)
+            {
+                PagesProjectGetProjects200? result = await client.Accounts[accountId].Pages.Projects.GetAsync(config =>
+                {
+                    config.QueryParameters.Page = page;
+                    config.QueryParameters.PerPage = 100;
+                }, cancellationToken).NoSync();
+
+                if (result?.Result is not { Count: > 0 } pageProjects)
+                    break;
+
+                projects.AddRange(pageProjects);
+
+                double? totalPages = result.ResultInfo?.TotalPages;
+
+                if (totalPages.HasValue ? page >= totalPages.Value : pageProjects.Count < 100)
+                    break;
+
+                page++;
+            }
+
             _logger.LogInformation("Successfully listed Pages projects");
-            return result?.Result ?? [];
+            return projects;
         }
         catch (Exception ex)
         {
@@ -241,7 +265,8 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
             PagesDomainsAddDomain200? result = await client.Accounts[accountId].Pages.Projects[projectName].Domains
                                                            .PostAsync(domain, null, cancellationToken).NoSync();
 
-            string? zoneId = await _zonesUtil.GetId(zoneDomain, cancellationToken).NoSync();
+            string zoneId = await _zonesUtil.GetId(zoneDomain, cancellationToken).NoSync() ??
+                            throw new InvalidOperationException($"Cloudflare zone '{zoneDomain}' was not found");
 
             await _dnsRecordsUtil
                   .AddCnameRecord(zoneId, customDomain, $"{projectName}.pages.dev", 1, true, cancellationToken)
@@ -271,7 +296,8 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
             await client.Accounts[accountId].Pages.Projects[projectName].Domains[customDomain]
                         .DeleteAsync(null, cancellationToken).NoSync();
 
-            string? zoneId = await _zonesUtil.GetId(zoneDomain, cancellationToken).NoSync();
+            string zoneId = await _zonesUtil.GetId(zoneDomain, cancellationToken).NoSync() ??
+                            throw new InvalidOperationException($"Cloudflare zone '{zoneDomain}' was not found");
 
             await _dnsRecordsUtil.RemoveCnameRecord(zoneId, customDomain, cancellationToken).NoSync();
 
@@ -364,7 +390,7 @@ public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
                                      .NoSync();
             _logger.LogInformation("Successfully retrieved GitHub configuration for Pages project {ProjectName}",
                 projectName);
-            return result.Result?.Source;
+            return result?.Result?.Source;
         }
         catch (Exception ex)
         {
