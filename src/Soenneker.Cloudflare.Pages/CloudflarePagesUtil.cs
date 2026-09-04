@@ -16,6 +16,7 @@ using Soenneker.Extensions.String;
 
 namespace Soenneker.Cloudflare.Pages;
 
+/// <inheritdoc cref="ICloudflarePagesUtil" />
 public sealed class CloudflarePagesUtil : ICloudflarePagesUtil
 {
     private readonly ICloudflareClientUtil _client;
