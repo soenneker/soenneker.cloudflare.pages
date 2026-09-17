@@ -45,6 +45,6 @@
 
     <ItemGroup>
         <PackageReference Include="Soenneker.Cloudflare.DnsRecords" Version="4.0.526" />
-        <PackageReference Include="Soenneker.Cloudflare.Zones" Version="4.0.906" />
+        <PackageReference Include="Soenneker.Cloudflare.Zones" Version="4.0.908" />
     </ItemGroup>
 </Project>
